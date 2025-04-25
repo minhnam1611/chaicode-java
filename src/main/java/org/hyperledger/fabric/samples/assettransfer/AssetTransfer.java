@@ -57,12 +57,12 @@ public final class AssetTransfer implements ContractInterface {
 
         System.out.println("🚀 InitLedger starting...");
 
-        CreateAsset(ctx, "asset1", "blue", 5, "Tomoko", 300);
-        CreateAsset(ctx, "asset2", "red", 5, "Brad", 400);
-        CreateAsset(ctx, "asset3", "green", 10, "Jin Soo", 500);
-        CreateAsset(ctx, "asset4", "yellow", 10, "Max", 600);
-        CreateAsset(ctx, "asset5", "black", 15, "Adrian", 700);
-        CreateAsset(ctx, "asset6", "white", 15, "Michel", 700);
+        CreateAsset(ctx, "asset1", "Tomoko", "csv", "");
+        CreateAsset(ctx, "asset2", "Brad", "csv", "");
+        CreateAsset(ctx, "asset3",  "Jin Soo", "csv", "");
+        CreateAsset(ctx, "asset4",  "Max", "csv", "");
+        CreateAsset(ctx, "asset5", "Adrian", "csv", "");
+        CreateAsset(ctx, "asset6",  "Michel", "csv" , "");
 
         System.out.println("✅ InitLedger completed");
     }
@@ -72,15 +72,15 @@ public final class AssetTransfer implements ContractInterface {
      *
      * @param ctx the transaction context
      * @param assetID the ID of the new asset
-     * @param color the color of the new asset
-     * @param size the size for the new asset
      * @param owner the owner of the new asset
-     * @param appraisedValue the appraisedValue of the new asset
      * @return the created asset
      */
     @Transaction(intent = Transaction.TYPE.SUBMIT)
-    public Asset CreateAsset(final Context ctx, final String assetID, final String color, final int size,
-        final String owner, final int appraisedValue) {
+    public Asset CreateAsset(final Context ctx,
+                             final String assetID,
+                             final String owner,
+                             final String typeFile,
+                             final String base64File) {
         ChaincodeStub stub = ctx.getStub();
 
         if (AssetExists(ctx, assetID)) {
@@ -89,7 +89,7 @@ public final class AssetTransfer implements ContractInterface {
             throw new ChaincodeException(errorMessage, AssetTransferErrors.ASSET_ALREADY_EXISTS.toString());
         }
 
-        Asset asset = new Asset(assetID, color, size, owner, appraisedValue);
+        Asset asset = new Asset(assetID, owner, typeFile,base64File);
         // Use Genson to convert the Asset into string, sort it alphabetically and serialize it into a json string
         String sortedJson = genson.serialize(asset);
         stub.putStringState(assetID, sortedJson);
@@ -125,15 +125,15 @@ public final class AssetTransfer implements ContractInterface {
      *
      * @param ctx the transaction context
      * @param assetID the ID of the asset being updated
-     * @param color the color of the asset being updated
-     * @param size the size of the asset being updated
      * @param owner the owner of the asset being updated
-     * @param appraisedValue the appraisedValue of the asset being updated
      * @return the transferred asset
      */
     @Transaction(intent = Transaction.TYPE.SUBMIT)
-    public Asset UpdateAsset(final Context ctx, final String assetID, final String color, final int size,
-        final String owner, final int appraisedValue) {
+    public Asset UpdateAsset(final Context ctx,
+                             final String assetID,
+                             final String owner,
+                             final String typeFile,
+                             final String base64File) {
         ChaincodeStub stub = ctx.getStub();
 
         if (!AssetExists(ctx, assetID)) {
@@ -142,7 +142,7 @@ public final class AssetTransfer implements ContractInterface {
             throw new ChaincodeException(errorMessage, AssetTransferErrors.ASSET_NOT_FOUND.toString());
         }
 
-        Asset newAsset = new Asset(assetID, color, size, owner, appraisedValue);
+        Asset newAsset = new Asset(assetID, owner, typeFile, base64File);
         // Use Genson to convert the Asset into string, sort it alphabetically and serialize it into a json string
         String sortedJson = genson.serialize(newAsset);
         stub.putStringState(assetID, sortedJson);
@@ -192,7 +192,9 @@ public final class AssetTransfer implements ContractInterface {
      * @return the old owner
      */
     @Transaction(intent = Transaction.TYPE.SUBMIT)
-    public String TransferAsset(final Context ctx, final String assetID, final String newOwner) {
+    public String TransferAsset(final Context ctx,
+                                final String assetID,
+                                final String newOwner) {
         ChaincodeStub stub = ctx.getStub();
         String assetJSON = stub.getStringState(assetID);
 
@@ -204,7 +206,7 @@ public final class AssetTransfer implements ContractInterface {
 
         Asset asset = genson.deserialize(assetJSON, Asset.class);
 
-        Asset newAsset = new Asset(asset.getAssetID(), asset.getColor(), asset.getSize(), newOwner, asset.getAppraisedValue());
+        Asset newAsset = new Asset(asset.getAssetID(), newOwner, asset.getTypeFile(), asset.getBase64File());
         // Use a Genson to conver the Asset into string, sort it alphabetically and serialize it into a json string
         String sortedJson = genson.serialize(newAsset);
         stub.putStringState(assetID, sortedJson);

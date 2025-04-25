@@ -17,47 +17,44 @@ public final class Asset {
     @Property()
     private final String assetID;
 
-    @Property()
-    private final String color;
-
-    @Property()
-    private final int size;
 
     @Property()
     private final String owner;
 
     @Property()
-    private final int appraisedValue;
+    private final String typeFile;
+    @Property()
+    private final String base64File;
+
+
 
     public String getAssetID() {
         return assetID;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public int getSize() {
-        return size;
     }
 
     public String getOwner() {
         return owner;
     }
 
-    public int getAppraisedValue() {
-        return appraisedValue;
+    public String getBase64File() {
+        return base64File;
     }
 
-    public Asset(@JsonProperty("assetID") final String assetID, @JsonProperty("color") final String color,
-            @JsonProperty("size") final int size, @JsonProperty("owner") final String owner,
-            @JsonProperty("appraisedValue") final int appraisedValue) {
-        this.assetID = assetID;
-        this.color = color;
-        this.size = size;
-        this.owner = owner;
-        this.appraisedValue = appraisedValue;
+    public String getTypeFile() {
+        return typeFile;
     }
+
+    public Asset(@JsonProperty("assetID") final String assetID,
+                 @JsonProperty("owner") final String owner,
+                 @JsonProperty("typeFile") final String typeFile,
+                 @JsonProperty("base64File") final String base64File) {
+        this.assetID = assetID;
+        this.owner = owner;
+        this.base64File = base64File;
+        this.typeFile = typeFile;
+    }
+
+
 
     @Override
     public boolean equals(final Object obj) {
@@ -71,23 +68,17 @@ public final class Asset {
 
         Asset other = (Asset) obj;
 
-        return Objects.deepEquals(
-                new String[] {getAssetID(), getColor(), getOwner()},
-                new String[] {other.getAssetID(), other.getColor(), other.getOwner()})
-                &&
-                Objects.deepEquals(
-                new int[] {getSize(), getAppraisedValue()},
-                new int[] {other.getSize(), other.getAppraisedValue()});
+        return Objects.equals(getAssetID(), other.getAssetID()) && Objects.equals(getOwner(), other.getOwner()) && Objects.equals(getTypeFile(), other.getTypeFile()) && Objects.equals(getBase64File(), other.getBase64File());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getAssetID(), getColor(), getSize(), getOwner(), getAppraisedValue());
+        return Objects.hash(getAssetID(), getOwner(), getTypeFile(), getBase64File());
     }
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "@" + Integer.toHexString(hashCode()) + " [assetID=" + assetID + ", color="
-                + color + ", size=" + size + ", owner=" + owner + ", appraisedValue=" + appraisedValue + "]";
+        return this.getClass().getSimpleName() + "@" + Integer.toHexString(hashCode()) +
+                " [assetID=" + assetID + ", owner=" + owner + ", typeFile=" + typeFile + "]";
     }
 }

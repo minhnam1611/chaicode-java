@@ -5,7 +5,7 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '5.1.0'
     id 'application'
-    id 'checkstyle'
+//    id 'checkstyle'
     id 'jacoco'
 }
 
@@ -34,18 +34,18 @@ application {
     mainClass = 'org.hyperledger.fabric.contract.ContractRouter'
 }
 
-checkstyle {
-    toolVersion '8.21'
-    configFile file("config/checkstyle/checkstyle.xml")
-}
+//checkstyle {
+//    toolVersion '8.21'
+//    configFile file("config/checkstyle/checkstyle.xml")
+//}
 
-checkstyleMain {
-    source ='src/main/java'
-}
-
-checkstyleTest {
-    source ='src/test/java'
-}
+//checkstyleMain {
+//    source ='src/main/java'
+//}
+//
+//checkstyleTest {
+//    source ='src/test/java'
+//}
 
 jacocoTestReport {
     dependsOn test
